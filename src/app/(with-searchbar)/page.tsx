@@ -4,6 +4,7 @@ import { BookData } from "@/types";
 import { Suspense } from "react";
 import BookItemSkeleton from "@/components/skeleton/book-item-skeleton";
 import BookListItem from "@/components/skeleton/book-list-skeleton";
+import { Metadata } from "next";
 
 //  export const dynamic =  ''
 // 특정 페이지의 유형을 강제로 static 혹은 dynamic 페이지로 설정
@@ -48,6 +49,16 @@ async function RecoBooks() {
 }
 
 export const dynamic = "force-dynamic";
+
+export const metadata: Metadata = {
+  title: "10012",
+  description: "10012에서 등록된 도서를 만나보세요",
+  openGraph: {
+    title: "10012",
+    description: "10012에서 등록된 도서를 만나보세요",
+    images: ["/thumbnail.png"],
+  },
+};
 
 export default function Home() {
   return (

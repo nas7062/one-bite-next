@@ -1,6 +1,8 @@
 import BookItem from "@/components/book-item";
 import BookListItem from "@/components/skeleton/book-list-skeleton";
 import { BookData } from "@/types";
+import { Metadata } from "next";
+import { title } from "process";
 import { Suspense, use } from "react";
 
 type SearchParams = { q?: string };
@@ -20,6 +22,23 @@ async function SearchResult({ q }: { q?: string }) {
       ))}
     </div>
   );
+}
+
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: Promise<{ q?: string }>;
+}): Promise<Metadata> {
+  const { q } = await searchParams;
+  return {
+    title: `${q} :10012`,
+    description: `${q}의 검색결과`,
+    openGraph: {
+      title: `${q} :10012`,
+      description: `${q}의 검색결과`,
+      images: ["/thumbnail.png"],
+    },
+  };
 }
 
 export default function Page({

@@ -4,6 +4,8 @@ import { notFound } from "next/navigation";
 import { use } from "react";
 import ReviewItem from "@/components/review-item";
 import ReviewEditor from "@/components/review-editor";
+import Image from "next/image";
+import { Metadata } from "next";
 
 export function generateStaticParams() {
   return [{ id: "1" }, { id: "2" }, { id: "3" }];
@@ -11,7 +13,8 @@ export function generateStaticParams() {
 
 async function BookDetail({ id }: { id: string }) {
   const response = await fetch(
-    `${process.env.NEXT_PUBLIC_API_SERVER_URL}/book/${id}`
+    `${process.env.NEXT_PUBLIC_API_SERVER_URL}/book/${id}`,
+    { cache: "force-cache" }
   );
   if (!response.ok) {
     if (response.status === 404) {
@@ -28,7 +31,12 @@ async function BookDetail({ id }: { id: string }) {
         className={style.cover_img_container}
         style={{ backgroundImage: `url('${coverImgUrl}')` }}
       >
-        <img src={coverImgUrl} />
+        <Image
+          src={coverImgUrl}
+          alt={`도서 ${title} 이미지`}
+          width={240}
+          height={300}
+        />
       </div>
       <div className={style.title}>{title}</div>
       <div className={style.subTitle}>{subTitle}</div>
@@ -57,6 +65,31 @@ async function ReviewList({ bookId }: { bookId: string }) {
       ))}
     </section>
   );
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}): Promise<Metadata> {
+  const { id } = await params;
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_API_SERVER_URL}/book/${id}`,
+    { cache: "force-cache" }
+  );
+  if (!response.ok) {
+    throw new Error(response.statusText);
+  }
+  const book: BookData = await response.json();
+  return {
+    title: `${book.title} - 10012`,
+    description: `${book.description}`,
+    openGraph: {
+      title: `${book.title}- 10012`,
+      description: `${book.description}`,
+      images: [book.coverImgUrl],
+    },
+  };
 }
 
 export default function Page({ params }: { params: Promise<{ id: string }> }) {
